@@ -18,10 +18,14 @@
 typedef struct {
   va_list ap;
   const char *fmt;
+#ifdef LOG_SOURCE
   const char *file;
+#endif
   struct tm *time;
   void *udata;
+#ifdef LOG_SOURCE
   int line;
+#endif
   int level;
 } log_Event;
 
@@ -30,12 +34,25 @@ typedef void (*log_LockFn)(bool lock, void *udata);
 
 enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL };
 
+#ifdef LOG_SOURCE
+
 #define log_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
 #define log_debug(...) log_log(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
 #define log_info(...)  log_log(LOG_INFO,  __FILE__, __LINE__, __VA_ARGS__)
 #define log_warn(...)  log_log(LOG_WARN,  __FILE__, __LINE__, __VA_ARGS__)
 #define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 #define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
+
+#else
+
+#define log_trace(...) log_log(LOG_TRACE, __VA_ARGS__)
+#define log_debug(...) log_log(LOG_DEBUG, __VA_ARGS__)
+#define log_info(...)  log_log(LOG_INFO, __VA_ARGS__)
+#define log_warn(...)  log_log(LOG_WARN, __VA_ARGS__)
+#define log_error(...) log_log(LOG_ERROR, __VA_ARGS__)
+#define log_fatal(...) log_log(LOG_FATAL, __VA_ARGS__)
+
+#endif /* LOG_SOURCE */
 
 const char* log_level_string(int level);
 void log_set_lock(log_LockFn fn, void *udata);
@@ -44,6 +61,10 @@ void log_set_quiet(bool enable);
 int log_add_callback(log_LogFn fn, void *udata, int level);
 int log_add_fp(FILE *fp, int level);
 
+#ifdef LOG_SOURCE
 void log_log(int level, const char *file, int line, const char *fmt, ...);
+#else
+void log_log(int level, const char *fmt, ...);
+#endif
 
 #endif

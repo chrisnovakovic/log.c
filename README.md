@@ -24,7 +24,7 @@ Each function takes a printf format string followed by additional arguments:
 log_trace("Hello %s", "world")
 ```
 
-Resulting in a line with the given format printed to stderr:
+Resulting in a line with a format like the following being printed to stderr:
 
 ```
 20:18:26 TRACE src/main.c:11: Hello world
@@ -46,7 +46,7 @@ level is `LOG_TRACE`, such that nothing is ignored.
 #### log_add_fp(FILE *fp, int level)
 One or more file pointers where the log will be written can be provided to the
 library by using the `log_add_fp()` function. The data written to the file
-output is of the following format:
+output is of a format like the following:
 
 ```
 2047-03-11 20:18:26 TRACE src/main.c:11: Hello world
@@ -76,6 +76,11 @@ Returns the name of the given log level as a string.
 #### LOG_USE_COLOR
 If the library is compiled with `-DLOG_USE_COLOR` ANSI color escape codes will
 be used when printing.
+
+
+#### LOG_SOURCE
+If the library is compiled with `-DLOG_SOURCE`, the file name and line number on
+which log messages occurred will be printed.
 
 
 ## License
