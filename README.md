@@ -43,6 +43,13 @@ All logs below the given level will not be written to `stderr`. By default the
 level is `LOG_TRACE`, such that nothing is ignored.
 
 
+#### log_set_time_format(const char* fmt)
+The format of the time prepended to the log message can be set by the
+`log_set_time_format()` function. `fmt` should be a format string suitable for
+passing to `strftime()`. The default format string is `%H:%M:%S` for messages
+printed to `stderr` and `%Y-%m-%d %H:%M:%S` for messages written to files.
+
+
 #### log_add_fp(FILE *fp, int level)
 One or more file pointers where the log will be written can be provided to the
 library by using the `log_add_fp()` function. The data written to the file
