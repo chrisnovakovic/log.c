@@ -33,6 +33,7 @@ typedef struct {
 static struct {
   void *udata;
   log_LockFn lock;
+  const char *timefmt;
   int level;
   bool quiet;
   Callback callbacks[MAX_CALLBACKS];
@@ -51,8 +52,9 @@ static const char *level_colors[] = {
 
 
 static void stdout_callback(log_Event *ev) {
-  char buf[16];
-  buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
+  char buf[64];
+  const char *timefmt = (L.timefmt == NULL) ? "%H:%M:%S" : L.timefmt;
+  buf[strftime(buf, sizeof(buf), timefmt, ev->time)] = '\0';
 #ifdef LOG_USE_COLOR
 
 #ifdef LOG_SOURCE
@@ -88,7 +90,8 @@ static void stdout_callback(log_Event *ev) {
 
 static void file_callback(log_Event *ev) {
   char buf[64];
-  buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
+  const char *timefmt = (L.timefmt == NULL) ? "%Y-%m-%d %H:%M:%S" : L.timefmt;
+  buf[strftime(buf, sizeof(buf), timefmt, ev->time)] = '\0';
 
 #ifdef LOG_SOURCE
   fprintf(
@@ -134,6 +137,11 @@ void log_set_level(int level) {
 
 void log_set_quiet(bool enable) {
   L.quiet = enable;
+}
+
+
+void log_set_time_format(const char *fmt) {
+  L.timefmt = fmt;
 }
 
 
